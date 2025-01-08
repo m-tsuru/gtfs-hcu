@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/m-tsuru/gtfs-hcu/lib"
 )
@@ -12,11 +13,13 @@ var realtime_tripUpdate = "https://ajt-mobusta-gtfs.mcapps.jp/realtime/8/trip_up
 var realtime_vehiclePosition = "https://ajt-mobusta-gtfs.mcapps.jp/realtime/8/vehicle_position.bin"
 var realtime_alert = "https://ajt-mobusta-gtfs.mcapps.jp/realtime/8/alerts.bin"
 
-var out_dir = "./data"
-var fn = "static.zip"
+var data_dir = "./data"
+
+var static_db = "static.sqlite3"
+var static_fn = "static.zip"
 
 func getStaticData() error {
-	err := lib.Download(static, out_dir, fn, true)
+	err := lib.Download(static, data_dir, static_fn, true)
 	if err != nil {
 		log.Fatalln("Error:", err)
 		return err
@@ -25,7 +28,15 @@ func getStaticData() error {
 }
 
 func main() {
-	err := getStaticData()
+	db := filepath.Join(data_dir, static_db)
+
+	err := lib.InitDatabase(db)
+	if err != nil {
+		log.Fatalln(err)
+		os.Exit(1)
+	}
+
+	err = getStaticData()
 	if err != nil {
 		log.Fatalln(err)
 		os.Exit(1)
