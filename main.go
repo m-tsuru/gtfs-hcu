@@ -30,16 +30,25 @@ func getStaticData() error {
 func main() {
 	db := filepath.Join(data_dir, static_db)
 
-	err := lib.InitDatabase(db)
-	if err != nil {
-		log.Fatalln(err)
-		os.Exit(1)
-	}
+	var err error
 
 	err = getStaticData()
 	if err != nil {
 		log.Fatalln(err)
 		os.Exit(1)
 	}
+
+	err = lib.InitDatabase(db)
+	if err != nil {
+		log.Fatalln(err)
+		os.Exit(1)
+	}
+
+	err = lib.AddStaticData(db, data_dir+"/static")
+	if err != nil {
+		log.Fatalln("Error:", err)
+		os.Exit(1)
+	}
+
 	os.Exit(0)
 }

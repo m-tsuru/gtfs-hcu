@@ -76,6 +76,7 @@ CREATE TABLE routes_jp (
 	origin_stop		TEXT,		-- 起点
 	via_stop		TEXT,		-- 経過地
 	destination_stop	TEXT,		-- 終点
+	jp_parent_route_id TEXT,
 	FOREIGN KEY (route_id)
 	REFERENCES routes (route_id)
 );
@@ -194,27 +195,30 @@ CREATE TABLE fare_attributes (
 	currency_type		VARCHAR(16),			-- 通貨
 	payment_method		VARCHAR(2),			-- 支払いタイミング
 	transfers		VARCHAR(2),			-- 乗換
-	transfer_duration	INT UNSIGNED			-- 乗換有効期限(秒)
+	transfer_duration	INT UNSIGNED,			-- 乗換有効期限(秒)
+	agency_id		VARCHAR(64),			-- 事業者ID
+	FOREIGN KEY (agency_id)
+	REFERENCES agency (agency_id)
 );
 
 -- 運賃定義情報
 CREATE TABLE fare_rules (
-	fare_id		VARCHAR(64) PRIMARY KEY,	-- 運賃ID
+	fare_id		VARCHAR(64),	-- 運賃ID
 	route_id	VARCHAR(64),			-- 経路ID
 	origin_id	VARCHAR(64),			-- 乗車地ゾーン
 	destination_id	VARCHAR(64),			-- 降車地ゾーン
-	contains_id	VARCHAR(64),		-- 通過ゾーン(使用しない)
+	contains_id	VARCHAR(64),	-- 通過ゾーン(使用しない)
 	FOREIGN KEY (route_id)
 	REFERENCES routes (route_id)
 );
 
 -- 描画情報
 CREATE TABLE shapes (
-	shape_id		VARCHAR(64) PRIMARY KEY,	-- 描画ID
+	shape_id		VARCHAR(64),	-- 描画ID
 	shape_pt_lat		VARCHAR(16),			-- 描画緯度
 	shape_pt_lon		VARCHAR(16),			-- 描画経度
 	shape_pt_sequence	INT UNSIGNED,			-- 描画順序
-	shape_dist_traveleded	INT UNSIGNED			-- 描画距離(使用しない)
+	shape_dist_traveled	INT UNSIGNED			-- 描画距離(使用しない)
 );
 
 -- 提供情報
